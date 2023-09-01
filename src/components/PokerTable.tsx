@@ -1,16 +1,25 @@
 "use client";
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useCallback } from "react";
 
 import { useAppSelector, useAppDispatch } from "store/hooks";
 
-import { removeTable, setTimer, decrementTimer } from "slices/TablesSlice";
-import ActiveTable, { setActiveTable } from "slices/ActiveTable";
+import {
+  activeTable,
+  removeTable,
+  setTimer,
+  decrementTimer,
+  orderTable,
+  setActionRequired,
+  setActiveTable,
+} from "slices/TablesSlice";
+
 import { useSelector } from "react-redux";
 
 export interface Table {
   id: number;
   name: string;
   timer: number;
+  actionRequired: boolean;
 }
 
 type IProps = {
@@ -19,11 +28,24 @@ type IProps = {
 
 const PokerTable = ({ table }: IProps) => {
   const dispatch = useAppDispatch();
-  const activeTable = useAppSelector((state) => state.activeTable.value);
+  const activeTable = useAppSelector((state) => state.tables.active);
+  const tables = useAppSelector((state) => state.tables.value);
   const getRandomArbitrary = (min: number, max: number) => {
     return Math.round(Math.random() * (max - min) + min);
   };
   const intervalId = useRef<NodeJS.Timer>();
+
+  const timeOutId = useRef<NodeJS.Timeout>();
+  const processActions = useCallback(
+    (timerValue: number, action: boolean) => {
+      dispatch(setTimer({ id: table.id, value: timerValue }));
+      dispatch(setActionRequired({ id: table.id, value: action }));
+      dispatch(orderTable());
+
+      if (tables.length) dispatch(setActiveTable(tables[0]));
+    },
+    [dispatch, tables, table.id]
+  );
 
   useEffect(() => {
     // helper function to stop an existing timer
@@ -41,20 +63,47 @@ const PokerTable = ({ table }: IProps) => {
     }
     // stop the timer when the timer is <= 0
     else {
+      processActions(-1, false);
       clear();
     }
     // cleanup function stops the timer when the component unmounts
     return clear;
-  }, [dispatch, table.id, table.timer]);
+  }, [dispatch, table.id, table.timer, processActions]);
+
+  useEffect(() => {
+    const clear = () => {
+      if (timeOutId.current) {
+        clearTimeout(timeOutId.current);
+      }
+    };
+
+    // start the timer
+    if (!table.actionRequired) {
+      timeOutId.current = setTimeout(() => {
+        const value = getRandomArbitrary(15, 30);
+        processActions(value, true);
+      }, 10000);
+    }
+    // stop the timer when the timer is <= 0
+    else {
+      clear();
+    }
+    // cleanup function stops the timer when the component unmounts
+    return clear;
+  }, [dispatch, table.actionRequired, table.id, processActions]);
 
   return (
     <div
       onClick={(e) => {
         dispatch(setActiveTable(table));
-        e.preventDefault;
+        e.stopPropagation();
       }}
       className={`bg-white border  ${
-        table.id == activeTable?.id ? "border-red-500" : "border-black"
+        table.id == activeTable?.id
+          ? "border-red-500"
+          : table.actionRequired
+          ? "border-yellow-500"
+          : "border-black"
       }`}
     >
       <div className="flex items-center border-b border-black justify-between h-12">
@@ -91,20 +140,10 @@ const PokerTable = ({ table }: IProps) => {
           className="border border-black"
           disabled={table.timer <= 0}
           onClick={() => {
-            dispatch(setTimer({ id: table.id, value: -1 }));
+            processActions(-1, false);
           }}
         >
           Miser
-        </button>
-        <button
-          className="border border-black"
-          onClick={(e) => {
-            const value = getRandomArbitrary(15, 30);
-            console.log(value);
-            dispatch(setTimer({ id: table.id, value: value }));
-          }}
-        >
-          start timer
         </button>
       </div>
     </div>
