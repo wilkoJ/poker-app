@@ -78,16 +78,13 @@ export const tablesSlice = createSlice({
         return a.timer - b.timer;
       });
       state.tables = arr;
-      // console.log("sorted", current(state));
     },
     setActiveTable: (state, action: PayloadAction<Table>) => {
       const value = action.payload;
       state.active = value;
-      // console.log("setactive", current(state));
     },
     setFirstActiveTable: (state) => {
       state.active = state.tables[0];
-      // console.log("setactive", current(state));
     },
   },
 });

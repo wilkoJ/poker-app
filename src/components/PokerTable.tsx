@@ -4,7 +4,6 @@ import React, { useRef, useEffect, useState, useCallback } from "react";
 import { useAppSelector, useAppDispatch } from "store/hooks";
 
 import {
-  activeTable,
   removeTable,
   setTimer,
   decrementTimer,
