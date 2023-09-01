@@ -10,6 +10,7 @@ import {
 } from "unique-names-generator";
 import { myUniqueName, randomNumber } from "utils";
 
+//we could have use a Set here for performance and make sure we have unique id, but i know it's deprecated in redux due to the fact it's not serializable
 interface TablesState {
   tables: Table[];
   active: Table | null;

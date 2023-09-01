@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useEffect, useState, useCallback } from "react";
+import React, { useRef, useEffect } from "react";
 
 import { useAppSelector, useAppDispatch } from "store/hooks";
 
@@ -13,7 +13,6 @@ import {
   setFirstActiveTable,
 } from "slices/TablesSlice";
 
-import { useSelector } from "react-redux";
 import Table from "models/Table";
 import { getRandomArbitrary } from "utils";
 
@@ -142,4 +141,5 @@ const PokerTable = ({ table }: IProps) => {
   );
 };
 
+export const MemoizedPokerTable = React.memo(PokerTable);
 export default PokerTable;
