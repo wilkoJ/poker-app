@@ -92,7 +92,7 @@ const PokerTable = ({ table }: IProps) => {
           : table.actionRequired
           ? "border-yellow-500"
           : "border-black"
-      } p5 h-36 w-52 block hover:border-green-500`}
+      } p5 h-36 w-52 block`}
     >
       <div className="flex flex-wrap items-center border-b border-black justify-between h-12 ">
         <p>{table.name}</p>
