@@ -14,13 +14,8 @@ import {
 } from "slices/TablesSlice";
 
 import { useSelector } from "react-redux";
-
-export interface Table {
-  id: number;
-  name: string;
-  timer: number;
-  actionRequired: boolean;
-}
+import Table from "models/Table";
+import { getRandomArbitrary } from "utils";
 
 type IProps = {
   table: Table;
@@ -30,9 +25,7 @@ const PokerTable = ({ table }: IProps) => {
   const dispatch = useAppDispatch();
   const activeTable = useAppSelector((state) => state.tables.active);
   const tables = useAppSelector((state) => state.tables.tables);
-  const getRandomArbitrary = (min: number, max: number) => {
-    return Math.round(Math.random() * (max - min) + min);
-  };
+
   const intervalId = useRef<NodeJS.Timer>();
 
   const timeOutId = useRef<NodeJS.Timeout>();

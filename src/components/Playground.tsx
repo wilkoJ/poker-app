@@ -13,8 +13,8 @@ const Playground = () => {
   useEffect(() => {});
   return (
     <div className="flex w-screen h-screen p-4 gap-2">
-      <div className="flex  flex-wrap  max-w-6xl h-fit bg-gray-700 gap-2 border-gray-950 border p-4">
-        {Array.from(tables.values()).map((elem, index) => {
+      <div className="flex  flex-wrap w-screen  max-w-6xl h-fit bg-gray-700 gap-2 border-gray-950 border p-4">
+        {tables.map((elem) => {
           return <PokerTable key={elem.id} table={elem} />;
         })}
       </div>

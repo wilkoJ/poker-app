@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, current } from "@reduxjs/toolkit";
-import { Table } from "components/PokerTable";
+import Table from "models/Table";
 import { stat } from "fs";
 import type { RootState } from "store/store";
 import {
@@ -8,6 +8,7 @@ import {
   adjectives,
   colors,
 } from "unique-names-generator";
+import { myUniqueName, randomNumber } from "utils";
 
 interface TablesState {
   tables: Table[];
@@ -26,17 +27,9 @@ export const tablesSlice = createSlice({
   initialState,
   reducers: {
     addTable: (state) => {
-      const name = uniqueNamesGenerator({
-        dictionaries: [
-          adjectives,
-          NumberDictionary.generate({ min: 0, max: 999 }),
-        ],
-        length: 2,
-        separator: "",
-        style: "lowerCase",
-      });
+      const name = myUniqueName();
       state.tables.push({
-        id: Number(NumberDictionary.generate({ min: 0, max: 20000 })),
+        id: randomNumber(),
         name: name,
         timer: -1,
         actionRequired: false,
