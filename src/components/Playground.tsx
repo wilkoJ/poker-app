@@ -8,7 +8,7 @@ import { useAppSelector, useAppDispatch } from "store/hooks";
 import { addTable } from "slices/TablesSlice";
 
 const Playground = () => {
-  const tables = useAppSelector((state) => state.tables.value);
+  const tables = useAppSelector((state) => state.tables.tables);
   const dispatch = useAppDispatch();
   useEffect(() => {});
   return (

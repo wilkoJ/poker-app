@@ -1,5 +1,6 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, current } from "@reduxjs/toolkit";
 import { Table } from "components/PokerTable";
+import { stat } from "fs";
 import type { RootState } from "store/store";
 import {
   uniqueNamesGenerator,
@@ -9,16 +10,16 @@ import {
 } from "unique-names-generator";
 
 interface TablesState {
-  value: Table[];
+  tables: Table[];
   active: Table | null;
 }
 export type priority = 1 | 2 | 3;
 const initialState: TablesState = {
-  value: [],
+  tables: [],
   active: null,
 };
 
-//Refacto Could discosiate the timer into his own slice linked by table.id same for the activeTable but it's simpler this way for this case.
+//Refacto Could discosiate the timer into his own slice linked by table.id same for the activeTable
 
 export const tablesSlice = createSlice({
   name: "tables",
@@ -35,7 +36,7 @@ export const tablesSlice = createSlice({
         separator: "",
         style: "capital",
       });
-      state.value.push({
+      state.tables.push({
         id: Number(NumberDictionary.generate({ min: 0, max: 20000 })),
         name: name,
         timer: -1,
@@ -43,17 +44,18 @@ export const tablesSlice = createSlice({
       });
     },
     removeTable: (state, action: PayloadAction<number>) => {
-      state.value = state.value.filter((item) => item.id != action.payload);
+      state.tables = state.tables.filter((item) => item.id != action.payload);
     },
     setTimer: (state, action: PayloadAction<{ id: number; value: number }>) => {
       const { id, value } = action.payload;
-      state.value = state.value.map((elem) => {
+      const arr = state.tables.map((elem) => {
         if (elem.id == id) elem.timer = value;
         return elem;
       });
+      state.tables = arr;
     },
     decrementTimer: (state, action: PayloadAction<number>) => {
-      state.value = state.value.map((elem) => {
+      state.tables = state.tables.map((elem) => {
         if (elem.id == action.payload) if (elem.timer > 0) elem.timer -= 1;
         return elem;
       });
@@ -62,23 +64,30 @@ export const tablesSlice = createSlice({
       state,
       action: PayloadAction<{ id: number; value: boolean }>
     ) => {
-      state.value = state.value.map((elem) => {
+      state.tables = state.tables.map((elem) => {
         const { id, value } = action.payload;
         if (elem.id == id) elem.actionRequired = value;
         return elem;
       });
     },
     orderTable: (state) => {
-      state.value = state.value.sort((a, b) => {
+      const arr = state.tables.sort((a, b) => {
         if (a.actionRequired && a.id == state.active?.id) return 1;
         if (a.actionRequired && !b.actionRequired) return -1;
         if (!a.actionRequired && b.actionRequired) return 1;
         return a.timer - b.timer;
       });
+      state.tables = arr;
+      // console.log("sorted", current(state));
     },
     setActiveTable: (state, action: PayloadAction<Table>) => {
-      state.active = action.payload;
-      console.log(state.active);
+      const value = action.payload;
+      state.active = value;
+      // console.log("setactive", current(state));
+    },
+    setFirstActiveTable: (state) => {
+      state.active = state.tables[0];
+      // console.log("setactive", current(state));
     },
   },
 });
@@ -91,10 +100,10 @@ export const {
   orderTable,
   setActionRequired,
   setActiveTable,
+  setFirstActiveTable,
 } = tablesSlice.actions;
 
-export const selectTables = (state: RootState) => state.tables.value;
+export const selectTables = (state: RootState) => state.tables.tables;
 
 export const activeTable = (state: RootState) => state.tables.active;
-1;
 export default tablesSlice.reducer;

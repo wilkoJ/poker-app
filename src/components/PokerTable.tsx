@@ -11,6 +11,7 @@ import {
   orderTable,
   setActionRequired,
   setActiveTable,
+  setFirstActiveTable,
 } from "slices/TablesSlice";
 
 import { useSelector } from "react-redux";
@@ -29,23 +30,19 @@ type IProps = {
 const PokerTable = ({ table }: IProps) => {
   const dispatch = useAppDispatch();
   const activeTable = useAppSelector((state) => state.tables.active);
-  const tables = useAppSelector((state) => state.tables.value);
+  const tables = useAppSelector((state) => state.tables.tables);
   const getRandomArbitrary = (min: number, max: number) => {
     return Math.round(Math.random() * (max - min) + min);
   };
   const intervalId = useRef<NodeJS.Timer>();
 
   const timeOutId = useRef<NodeJS.Timeout>();
-  const processActions = useCallback(
-    (timerValue: number, action: boolean) => {
-      dispatch(setTimer({ id: table.id, value: timerValue }));
-      dispatch(setActionRequired({ id: table.id, value: action }));
-      dispatch(orderTable());
-
-      if (tables.length) dispatch(setActiveTable(tables[0]));
-    },
-    [dispatch, tables, table.id]
-  );
+  const processActions = (timerValue: number, action: boolean) => {
+    dispatch(setTimer({ id: table.id, value: timerValue }));
+    dispatch(setActionRequired({ id: table.id, value: action }));
+    dispatch(orderTable());
+    if (tables.length) dispatch(setFirstActiveTable());
+  };
 
   useEffect(() => {
     // helper function to stop an existing timer
@@ -68,7 +65,7 @@ const PokerTable = ({ table }: IProps) => {
     }
     // cleanup function stops the timer when the component unmounts
     return clear;
-  }, [dispatch, table.id, table.timer, processActions]);
+  }, [dispatch, table.id, table.timer]);
 
   useEffect(() => {
     const clear = () => {
@@ -90,7 +87,7 @@ const PokerTable = ({ table }: IProps) => {
     }
     // cleanup function stops the timer when the component unmounts
     return clear;
-  }, [dispatch, table.actionRequired, table.id, processActions]);
+  }, [table.actionRequired, table.id]);
 
   return (
     <div
