@@ -29,12 +29,11 @@ export const tablesSlice = createSlice({
       const name = uniqueNamesGenerator({
         dictionaries: [
           adjectives,
-          colors,
           NumberDictionary.generate({ min: 0, max: 999 }),
         ],
-        length: 3,
+        length: 2,
         separator: "",
-        style: "capital",
+        style: "lowerCase",
       });
       state.tables.push({
         id: Number(NumberDictionary.generate({ min: 0, max: 20000 })),

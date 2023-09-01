@@ -100,9 +100,9 @@ const PokerTable = ({ table }: IProps) => {
           : table.actionRequired
           ? "border-yellow-500"
           : "border-black"
-      }`}
+      } p5 h-36 w-52 block hover:border-green-500`}
     >
-      <div className="flex items-center border-b border-black justify-between h-12">
+      <div className="flex flex-wrap items-center border-b border-black justify-between h-12 ">
         <p>{table.name}</p>
         <button
           onClick={() => {
@@ -128,16 +128,19 @@ const PokerTable = ({ table }: IProps) => {
           </svg>
         </button>
       </div>
-      <div className="flex flex-col ">
-        <span className={`${table.timer > 0 ? "visible1" : "hidden"}`}>
-          {table.timer}
+      <div className="flex flex-col justify-center p-2">
+        <span
+          className={`${table.timer > 0 ? "visible" : "invisible"} text-center`}
+        >
+          Time: {table.timer}
         </span>
         <button
-          className="border border-black"
+          type="button"
           disabled={table.timer <= 0}
           onClick={() => {
             processActions(-1, false);
           }}
+          className="disabled:bg-gray-400 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
         >
           Miser
         </button>

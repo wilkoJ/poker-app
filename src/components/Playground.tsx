@@ -12,19 +12,20 @@ const Playground = () => {
   const dispatch = useAppDispatch();
   useEffect(() => {});
   return (
-    <div className="flex w-screen h-screen ">
-      <div className="grid grid-cols-3  bg-green-100 gap-2 border-green-400 border p-4">
+    <div className="flex w-screen h-screen p-4 gap-2">
+      <div className="flex  flex-wrap  max-w-6xl h-fit bg-gray-700 gap-2 border-gray-950 border p-4">
         {Array.from(tables.values()).map((elem, index) => {
           return <PokerTable key={elem.id} table={elem} />;
         })}
       </div>
       <button
+        type="button"
         onClick={() => {
           dispatch(addTable());
         }}
-        className="text-black"
+        className=" h-24 align-middle focus:outline-none text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
       >
-        add table
+        Add table
       </button>
     </div>
   );
